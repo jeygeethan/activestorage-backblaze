@@ -1,2 +1,2 @@
-class ActiveStorage::Service::BackblazeService
+class ActiveStorage::Service::BackblazeService < ActiveStorage::Service
 end

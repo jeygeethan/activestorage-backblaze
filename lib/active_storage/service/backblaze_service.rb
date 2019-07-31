@@ -12,7 +12,7 @@ class ActiveStorage::Service::BackblazeService < ActiveStorage::Service
       b2_key_token: @key_token,
       b2_bucket_name: @bucket_name,
       b2_bucket_id: @bucket_id,
-      logger: Logger.new(STDOUT)
+      logger: Rails.logger
     )
   end
 
@@ -26,9 +26,17 @@ class ActiveStorage::Service::BackblazeService < ActiveStorage::Service
     end
   end
 
-  def download(key)
-    instrument :download, { key: key } do
-      io = @connection.get_object(@bucket_name, key)
+  def download(key, &block)
+    if block_given?
+      instrument :streaming_download, { key: key } do
+        stream(key, &block)
+      end
+    else
+      instrument :download, { key: key } do
+        resp = @connection.get_object(@bucket_name, key)
+        io = StringIO.new(resp.body)
+        io
+      end
     end
   end
 
@@ -75,5 +83,18 @@ class ActiveStorage::Service::BackblazeService < ActiveStorage::Service
   def headers_for_direct_upload(key, content_type:, checksum:, **)
     raise NotImpletementedError
   end
+
+  private
+    def stream(key, options = {}, &block)
+      resp = @connection.get_object(@bucket_name, key)
+      io = StringIO.new(resp.body)
+      io.binmode
+
+      chunk_size = 5.megabytes
+
+      while chunk = io.read(chunk_size)
+        yield chunk
+      end
+    end
 
 end

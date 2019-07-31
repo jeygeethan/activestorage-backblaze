@@ -1,8 +1,8 @@
 This is a gem for using backblaze with activestorage.
 
-Usage:
+##Usage:
 
-gem 'activestorage-backblaze'
+`gem 'activestorage-backblaze'`
 
 Then in your storage.yml, use the following
 

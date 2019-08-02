@@ -19,8 +19,12 @@ class ActiveStorage::Service::BackblazeService < ActiveStorage::Service
   def upload(key, io, checksum: nil, **options)
     instrument :upload, { key: key, checksum: checksum } do
       begin
-        @connection.put_object(@bucket_name, key, io)
+        io.binmode
+        io.rewind
+        @connection.put_object(@bucket_name, key, io.read)
       rescue => e
+        puts "ERROR - 101"
+        puts e.inspect
         raise ActiveStorage::IntegrityError
       end
     end
@@ -77,11 +81,17 @@ class ActiveStorage::Service::BackblazeService < ActiveStorage::Service
   end
 
   def url_for_direct_upload(key, expires_in:, content_type:, content_length:, checksum:)
-    raise NotImpletementedError
+    instrument :url, { key: key} do |payload|
+      result = @connection.b2_get_upload_url(@bucket_name)
+      url = result["uploadUrl"]
+      payload[:url] = url
+      url
+    end
   end
 
-  def headers_for_direct_upload(key, content_type:, checksum:, **)
-    raise NotImpletementedError
+  def headers_for_direct_upload(key, content_type:, checksum:, content_length:, **options)
+    result = @connection.b2_get_upload_url(@bucket_name)
+    { 'Authorization' => result["authorizationToken"], 'X-Bz-File-Name' => key, 'Content-Type' => content_type, 'Content-Length' => content_length, 'X-Bz-Content-Sha1' => 'do_not_verify' }
   end
 
   private
@@ -97,4 +107,15 @@ class ActiveStorage::Service::BackblazeService < ActiveStorage::Service
       end
     end
 
+end
+
+class Fog::Backblaze::Storage::Real
+  def b2_get_upload_url(bucket_name)
+    upload_url = @token_cache.fetch("upload_url/#{bucket_name}") do
+      bucket_id = _get_bucket_id!(bucket_name)
+      result = b2_command(:b2_get_upload_url, body: {bucketId: bucket_id})
+      result.json
+    end
+    upload_url
+  end
 end

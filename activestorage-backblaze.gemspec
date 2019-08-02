@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name = %q{activestorage-backblaze}
-  s.version = "0.0.4"
+  s.version = "0.0.5"
   s.date = %q{2019-07-30}
   s.summary = %q{activestorage-backblaze is for using backblaze b2 with activestorage in rails 5.2}
   s.files = Dir["lib/**/*"]

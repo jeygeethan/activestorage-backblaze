@@ -22,3 +22,19 @@ In your environments/production.rb or application.rb (depending on your choice) 
 ```ruby
 config.active_storage.service = :backblaze
 ```
+
+------
+
+# Javascript Usage
+
+### Corresponding git repos
+
+https://github.com/jeygeethan/actiontext-backblaze
+https://github.com/jeygeethan/activestorage-backblaze-javascript
+
+Add this to your package.json
+
+```"@jeygeethan/actiontext-backblaze": "^6.1.3-alpha"```
+
+This includes the activestorage-backblaze npm package as a dependency. Javascript is needed for direct uploads and use in Trix editor.
+

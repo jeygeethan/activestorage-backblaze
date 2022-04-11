@@ -1,5 +1,13 @@
 This is a gem for using backblaze with activestorage.
 
+### Note:
+
+``` Since this was created before backblaze supported S3 apis, this gem was relevant back then. But now you can directly use the S3 endpoints with Backblaze B2 and skip this gem
+
+Readmore: https://github.com/jeygeethan/activestorage-backblaze/issues/4
+```
+
+
 # Usage:
 
 ```ruby

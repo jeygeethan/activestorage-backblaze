@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
   s.licenses = ['MIT']
   s.authors = ["Jey"]
-  s.email = "geetan123321@gmail.com"
+  s.email = "jey@rocketapex.com"
   s.homepage = 'https://github.com/gten/activestorage-backblaze'
   s.metadata = { "source_code_uri" => "https://github.com/gten/activestorage-backblaze" }
 
